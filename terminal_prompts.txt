@@ -1,0 +1,11 @@
+# Terminal 1 — backend
+cd hireflow-backend
+npm install
+cp .env.example .env   # fill in real values, see below
+npm run dev             # runs on http://localhost:5000
+
+# Terminal 2 — frontend
+cd hireflow-frontend
+npm install
+cp .env.example .env    # already points to localhost:5000/api
+npm run dev              # runs on http://localhost:5173
