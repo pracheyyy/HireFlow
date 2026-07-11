@@ -1,0 +1,280 @@
+🎯 Final Authentication Goal
+
+By the end, your app should support:
+
+✅ Email & Password Signup
+✅ Login
+✅ Google OAuth Login
+✅ JWT Authentication
+✅ Refresh Tokens
+✅ Protected Routes
+✅ Logout
+✅ Forgot Password
+✅ Reset Password
+✅ Email Verification
+✅ Role-Based Access (Student/Admin)
+✅ Secure Session Management
+
+=================================================================
+
+🏗️ Authentication Flow
+
+1. New User Registration
+User
+   │
+   ▼
+Register Form
+   │
+   ▼
+Validate Input
+   │
+   ▼
+Check Email Exists?
+   │
+   ├── Yes → Show Error
+   │
+   └── No
+        │
+        ▼
+Hash Password (bcrypt)
+        │
+        ▼
+Save User in MongoDB
+        │
+        ▼
+Generate Email Verification Token
+        │
+        ▼
+Send Verification Email
+        │
+        ▼
+User Clicks Verification Link
+        │
+        ▼
+Account Verified ✅
+
+2. Login Flow
+User
+   │
+   ▼
+Enter Email & Password
+   │
+   ▼
+Backend Receives Request
+   │
+   ▼
+Find User
+   │
+   ▼
+Compare Password (bcrypt.compare)
+   │
+   ▼
+Generate JWT Access Token
+   │
+   ▼
+Generate Refresh Token
+   │
+   ▼
+Send Tokens to Frontend
+   │
+   ▼
+Redirect to Dashboard
+
+3. Every Protected Request
+React
+   │
+   ▼
+Axios Request
+   │
+Authorization: Bearer JWT
+   │
+   ▼
+Express Middleware
+   │
+Verify JWT
+   │
+   ├── Invalid → 401 Unauthorized
+   │
+   └── Valid
+         │
+         ▼
+Controller
+         │
+         ▼
+Response
+
+4. Google Login
+Click "Continue with Google"
+        │
+        ▼
+Google OAuth
+        │
+        ▼
+Backend
+        │
+        ▼
+Create User (if first login)
+        │
+        ▼
+Generate JWT
+        │
+        ▼
+Dashboard
+
+5. Logout
+Logout
+   │
+   ▼
+Delete Refresh Token
+   │
+   ▼
+Clear Cookies
+   │
+   ▼
+Remove Redux State
+   │
+   ▼
+Redirect Login
+
+_________________________________________________________________
+
+📂 Backend Structure
+
+backend/
+src/
+│
+├── config/
+│   ├── db.js
+│   ├── jwt.js
+│
+├── controllers/
+│   └── auth.controller.js
+│
+├── middleware/
+│   ├── auth.middleware.js
+│   ├── error.middleware.js
+│
+├── models/
+│   └── user.model.js
+│
+├── routes/
+│   └── auth.routes.js
+│
+├── services/
+│   ├── auth.service.js
+│   ├── email.service.js
+│
+├── utils/
+│   ├── generateToken.js
+│
+├── validators/
+│   └── auth.validator.js
+│
+├── app.js
+└── server.js
+
+👤 User Model
+User
+_id
+name
+email
+password
+avatar
+skills
+education
+role
+isVerified
+provider
+refreshToken
+createdAt
+updatedAt
+
+🔗 Auth API Endpoints
+Method	Endpoint	Purpose
+POST	/api/auth/register	Register
+POST	/api/auth/login	Login
+POST	/api/auth/logout	Logout
+POST	/api/auth/refresh-token	Get new access token
+POST	/api/auth/forgot-password	Send reset email
+POST	/api/auth/reset-password	Reset password
+GET	/api/auth/verify-email/:token	Verify email
+GET	/api/auth/google	Google OAuth
+GET	/api/auth/me	Current logged-in user
+
+🔐 Security Checklist
+
+Passwords-
+bcrypt (12 salt rounds)
+Never store plain text passwords
+
+JWT-
+Use two tokens:
+Access Token
+Expires in 15 minutes
+Sent with API requests
+Refresh Token
+Expires in 7 days
+Stored securely
+Used to issue new access tokens
+
+Cookies-
+Store the refresh token in an HttpOnly, Secure cookie so JavaScript cannot read it. This helps protect against token theft through XSS.
+
+Validation-
+Validate every request:
+Name
+Email
+Password
+File uploads
+
+Never trust frontend validation alone.
+
+=================================================================
+
+🎨 Frontend Pages
+
+Landing
+Register
+Login
+Forgot Password
+Reset Password
+Verify Email
+Dashboard
+Profile
+
+Settings
+🧩 React Components
+Navbar
+Sidebar
+ProtectedRoute
+LoginForm
+RegisterForm
+GoogleButton
+AvatarUploader
+ProfileCard
+Loader
+
+📦 Libraries
+
+Backend-
+express
+mongoose
+bcryptjs
+jsonwebtoken
+passport
+passport-google-oauth20
+cookie-parser
+dotenv
+express-validator
+helmet
+cors
+express-rate-limit
+nodemailer
+
+Frontend-
+react-router-dom
+axios
+redux-toolkit
+react-redux
+react-hook-form
+zod
