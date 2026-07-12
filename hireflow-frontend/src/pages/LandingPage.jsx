@@ -2,22 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FileText, Mic, Code2, Bot, BarChart3, ArrowRight, CheckCircle2,
-  UserPlus, ClipboardList, Sparkles, TrendingUp,
+  UserPlus, ClipboardList, Sparkles,
 } from "lucide-react";
 import Logo from "../components/Logo";
 
 const FEATURES = [
-  {
-    icon: FileText,
-    title: "AI resume analyzer",
-    desc: "Get an ATS compatibility score and targeted suggestions in seconds, not days.",
-    area: "resume",
-    big: true,
-  },
-  { icon: Mic, title: "Mock interviews", desc: "Practice HR and technical rounds with real AI feedback.", area: "mock" },
-  { icon: Bot, title: "AI career assistant", desc: "Company-specific prep plans, on demand.", area: "assistant" },
-  { icon: Code2, title: "Coding tracker", desc: "Daily goals, streaks, topic-wise progress.", area: "coding" },
-  { icon: BarChart3, title: "Progress analytics", desc: "One score for how ready you really are.", area: "analytics" },
+  { icon: FileText, title: "AI resume analyzer", desc: "Get an ATS compatibility score and targeted suggestions in seconds, not days." },
+  { icon: Mic, title: "Mock interviews", desc: "Practice HR and technical rounds with real AI feedback." },
+  { icon: Code2, title: "Coding tracker", desc: "Daily goals, streaks, topic-wise progress." },
+  { icon: Bot, title: "AI career assistant", desc: "Company-specific prep plans, on demand." },
+  // { icon: BarChart3, title: "Progress analytics", desc: "One score for how ready you really are." },
 ];
 
 const STEPS = [
@@ -88,14 +82,14 @@ export default function LandingPage() {
         .hf-blob-1 { animation: hf-float 7s ease-in-out infinite; }
         .hf-blob-2 { animation: hf-float 9s ease-in-out infinite 1s; }
         .hf-marquee-track { animation: hf-marquee 22s linear infinite; }
-        .hf-bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-areas: "resume resume mock assistant" "resume resume coding analytics"; gap: 16px; }
+        .hf-feature-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+        .hf-feature-card { flex: 1 1 260px; max-width: 300px; }
         .hf-hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; }
         @media (max-width: 900px) {
-          .hf-bento { grid-template-columns: 1fr 1fr; grid-template-areas: "resume resume" "mock assistant" "coding analytics"; }
           .hf-hero-grid { grid-template-columns: 1fr; }
         }
-        @media (max-width: 640px) {
-          .hf-bento { grid-template-columns: 1fr; grid-template-areas: "resume" "mock" "assistant" "coding" "analytics"; }
+        @media (max-width: 480px) {
+          .hf-feature-card { flex-basis: 100%; max-width: 100%; }
         }
       `}</style>
 
@@ -261,47 +255,36 @@ export default function LandingPage() {
         </Reveal>
 
         <Reveal>
-          <div className="hf-bento">
-            {FEATURES.map(({ icon: Icon, title, desc, area, big }) => (
+          <div className="hf-feature-grid">
+            {FEATURES.map(({ icon: Icon, title, desc }) => (
               <div
                 key={title}
+                className="hf-feature-card"
                 style={{
-                  gridArea: area,
-                  background: big ? "var(--brand-gradient)" : "var(--surface)",
-                  border: big ? "none" : "1px solid var(--border)",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
                   borderRadius: 18,
-                  padding: big ? 30 : 22,
+                  padding: 24,
                   boxShadow: "var(--shadow-card)",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: big ? "space-between" : "flex-start",
-                  minHeight: big ? 220 : undefined,
                 }}
               >
-                <div>
-                  <div
-                    style={{
-                      width: big ? 46 : 40,
-                      height: big ? 46 : 40,
-                      borderRadius: 12,
-                      background: big ? "rgba(255,255,255,0.15)" : "linear-gradient(135deg, #eaf1fd, #dbe7fb)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: 16,
-                      color: big ? "#fff" : "var(--brand-600)",
-                    }}
-                  >
-                    <Icon size={big ? 22 : 18} />
-                  </div>
-                  <h3 style={{ fontSize: big ? 19 : 15, fontWeight: 600, marginBottom: 8, color: big ? "#fff" : "var(--text-primary)" }}>{title}</h3>
-                  <p style={{ fontSize: big ? 14 : 12.5, color: big ? "#dbe7fb" : "var(--text-secondary)", lineHeight: 1.6, maxWidth: big ? 320 : undefined }}>{desc}</p>
+                <div
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: 12,
+                    background: "linear-gradient(135deg, #eaf1fd, #dbe7fb)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: 16,
+                    color: "var(--brand-600)",
+                  }}
+                >
+                  <Icon size={19} />
                 </div>
-                {big && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 20, fontSize: 13, fontWeight: 600, color: "#fff" }}>
-                    <TrendingUp size={15} /> 92% average ATS improvement
-                  </div>
-                )}
+                <h3 style={{ fontSize: 15.5, fontWeight: 600, marginBottom: 8 }}>{title}</h3>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>{desc}</p>
               </div>
             ))}
           </div>
