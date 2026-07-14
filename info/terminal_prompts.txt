@@ -9,3 +9,30 @@ cd hireflow-frontend
 npm install
 cp .env.example .env    # already points to localhost:5000/api
 npm run dev              # runs on http://localhost:5173
+
+_________________________________________________________________
+
+# to see data 
+
+npx mongosh "mongodb+srv://hireflow_admin:HireFlow123456@cluster0.iysf3uk.mongodb.net/hireflow?retryWrites=true&w=majority&appName=Cluster0"
+# then inside mongosh:
+use hireflow_admin
+db.users.find().limit(20).pretty()
+
+// show available DBs
+show dbs
+
+// confirm current DB
+db.getName()
+
+// switch to the DB your app uses
+use hireflow
+
+// list collections in that DB
+show collections
+
+// count users
+db.users.count()
+
+// show up to 20 user docs (hide sensitive fields)
+db.users.find({}, { password: 0, resetPasswordToken: 0, refreshPasswordExpires: 0, refreshToken: 0 }).limit(20).pretty()
