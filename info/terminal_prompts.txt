@@ -36,3 +36,13 @@ db.users.count()
 
 // show up to 20 user docs (hide sensitive fields)
 db.users.find({}, { password: 0, resetPasswordToken: 0, refreshPasswordExpires: 0, refreshToken: 0 }).limit(20).pretty()
+
+or
+
+// in mongosh (or use npx mongosh "<MONGO_URI>")
+use hireflow
+show collections
+db.users.count()
+db.users.find({}, { password:0, resetPasswordToken:0, refreshToken:0 }).limit(20).pretty()
+
+_________________________________________________________________
