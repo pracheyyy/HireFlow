@@ -1,0 +1,166 @@
+🅰️ Module A — AI Resume Analyzer & ATS Optimizer
+Purpose
+
+Help students create ATS-friendly resumes and improve them using AI.
+
+Features
+Generate Resume from Profile
+Upload Existing Resume (PDF/DOCX)
+ATS Score Calculation
+Resume Section Analysis
+Missing Keywords Detection
+Grammar & Formatting Check
+Company-Specific ATS Optimization
+AI Resume Suggestions
+Resume Version History
+Download Optimized Resume
+Output
+ATS Score (/100)
+Resume Quality Report
+Missing Skills
+Missing Keywords
+Improvement Suggestions
+Optimized Resume
+
+🅱️ Module B — AI Mock Interview Platform
+Purpose
+
+Prepare students for technical and HR interviews.
+
+Features
+Select Domain
+Select Target Company
+Select Experience Level
+AI Generates Questions
+Coding Round
+HR Round
+Technical Round
+Behavioral Round
+Voice/Text Interview
+AI Evaluation
+AI Report
+Technical Score
+Communication Score
+Confidence Score
+Accuracy Score
+Overall Interview Score
+Improvement Points
+Suggested Answers
+Interview Readiness %
+
+🅱️ Module C — AI Coding Tracker & DSA Planner
+Purpose
+
+Track coding journey and generate personalized DSA plans.
+
+Features
+Connect LeetCode
+Connect CodeChef
+Connect Codeforces
+Connect HackerRank
+Track Problems Solved
+Track Topics Covered
+Detect Weak Topics
+Company-wise DSA Roadmap
+Daily/Weekly Schedule
+Coding Test Generator
+Topic-wise Practice Tests
+Company-wise Mock Coding Contests
+AI Code Review
+AI Output
+Progress Timeline
+Remaining Topics
+Daily Goals
+Weekly Goals
+Expected Completion Date
+Contest Recommendations
+
+🅱️ Module D — AI Mentor (Career Assistant)
+Purpose
+
+A personal AI mentor available throughout the placement journey.
+
+Features
+DSA Doubts
+DBMS/OS/CN/OOPs Doubts
+Resume Guidance
+Interview Preparation
+Project Suggestions
+Career Advice
+Learning Roadmap
+Explain Coding Errors
+Code Review
+Placement Guidance
+Company Preparation Tips
+AI Memory
+Remembers learning progress
+Tracks completed topics
+Tracks weak areas
+Gives personalized suggestions
+
+🅱️ Module E — Progress Analytics Dashboard
+Purpose
+
+Provide a complete overview of the student's placement preparation.
+
+Dashboard Includes
+Resume Analytics
+ATS Score
+Resume Score
+Resume Improvement History
+Coding Analytics
+Problems Solved
+Contest Rating
+Topic Completion
+Daily Streak
+Interview Analytics
+Mock Interviews Taken
+Average Score
+Weak Areas
+Improvement Trend
+Learning Analytics
+Topics Completed
+Weekly Study Hours
+Learning Streak
+Placement Analytics
+Placement Readiness Score
+Company Eligibility
+Skill Gap Analysis
+Predicted Interview Readiness
+AI Insights
+
+Examples:
+
+"Complete Graphs to become Amazon-ready."
+"Improve your resume by adding one backend project."
+"You are 82% ready for SDE-1 interviews."
+
+_________________________________________________________________
+
+🏗️ Overall HireFlow Architecture
+                HireFlow
+
+        ┌────────────────────┐
+        │ User Authentication│
+        └─────────┬──────────┘
+                  │
+        ┌─────────▼──────────┐
+        │ Student Profile    │
+        └─────────┬──────────┘
+                  │
+     ┌────────────┼────────────┐
+     │            │            │
+     ▼            ▼            ▼
+ Module A     Module B     Module C
+ Resume        Interview    Coding
+
+            │            │
+            └──────┬─────┘
+                   ▼
+            Module D
+            AI Mentor
+
+                   │
+                   ▼
+            Module E
+        Analytics Dashboard
