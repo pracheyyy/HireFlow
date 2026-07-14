@@ -1,8 +1,12 @@
+const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
-const { generateAccessToken, generateRefreshToken, generateRandomToken } = require("../utils/generateToken");
-const { sendVerificationEmail, sendPasswordResetEmail } = require("./email.service");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../utils/generateToken");
+const { sendPasswordResetEmail } = require("./email.service");
 const { refreshSecret } = require("../config/jwt");
 
 const SALT_ROUNDS = 12;
@@ -16,18 +20,12 @@ const registerUser = async ({ name, email, password }) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-  const { rawToken, hashedToken } = generateRandomToken();
 
   const user = await User.create({
     name,
     email,
     password: hashedPassword,
-    provider: "local",
-    emailVerificationToken: hashedToken,
-    emailVerificationExpires: Date.now() + 24 * 60 * 60 * 1000, // 24h
   });
-
-  await sendVerificationEmail(email, rawToken);
 
   return user;
 };
@@ -35,7 +33,7 @@ const registerUser = async ({ name, email, password }) => {
 const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email }).select("+password +refreshToken");
 
-  if (!user || user.provider !== "local") {
+  if (!user) {
     const err = new Error("Invalid email or password");
     err.statusCode = 401;
     throw err;
@@ -45,12 +43,6 @@ const loginUser = async ({ email, password }) => {
   if (!isMatch) {
     const err = new Error("Invalid email or password");
     err.statusCode = 401;
-    throw err;
-  }
-
-  if (!user.isVerified) {
-    const err = new Error("Please verify your email before logging in");
-    err.statusCode = 403;
     throw err;
   }
 
@@ -94,44 +86,21 @@ const logoutUser = async (userId) => {
   await User.findByIdAndUpdate(userId, { refreshToken: "" });
 };
 
-const verifyEmail = async (rawToken) => {
-  const crypto = require("crypto");
-  const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
-
-  const user = await User.findOne({
-    emailVerificationToken: hashedToken,
-    emailVerificationExpires: { $gt: Date.now() },
-  }).select("+emailVerificationToken +emailVerificationExpires");
-
-  if (!user) {
-    const err = new Error("Verification link is invalid or has expired");
-    err.statusCode = 400;
-    throw err;
-  }
-
-  user.isVerified = true;
-  user.emailVerificationToken = undefined;
-  user.emailVerificationExpires = undefined;
-  await user.save();
-
-  return user;
-};
-
 const forgotPassword = async (email) => {
   const user = await User.findOne({ email });
-  // Don't reveal whether the email exists - always resolve silently
-  if (!user || user.provider !== "local") return;
+  if (!user) return;
 
-  const { rawToken, hashedToken } = generateRandomToken();
+  const rawToken = crypto.randomBytes(32).toString("hex");
+  const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
+
   user.resetPasswordToken = hashedToken;
-  user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 min
+  user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
   await user.save();
 
   await sendPasswordResetEmail(email, rawToken);
 };
 
 const resetPassword = async (rawToken, newPassword) => {
-  const crypto = require("crypto");
   const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
 
   const user = await User.findOne({
@@ -148,7 +117,7 @@ const resetPassword = async (rawToken, newPassword) => {
   user.password = await bcrypt.hash(newPassword, SALT_ROUNDS);
   user.resetPasswordToken = undefined;
   user.resetPasswordExpires = undefined;
-  user.refreshToken = ""; // force re-login everywhere after password reset
+  user.refreshToken = "";
   await user.save();
 
   return user;
@@ -159,7 +128,6 @@ module.exports = {
   loginUser,
   refreshAccessToken,
   logoutUser,
-  verifyEmail,
   forgotPassword,
   resetPassword,
 };

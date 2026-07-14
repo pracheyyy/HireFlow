@@ -1,8 +1,8 @@
 # HireFlow Backend — Authentication Module
 
-Implements the full auth architecture: email/password signup with verification, login,
-Google OAuth, JWT access + refresh tokens (HttpOnly cookie), protected routes,
-forgot/reset password, and role-based access (student/admin).
+Email/password signup with verification, login, JWT access + refresh tokens
+(HttpOnly cookie), protected routes, forgot/reset password, and role-based
+access (student/admin). No third-party OAuth required.
 
 ## Setup
 
@@ -12,13 +12,14 @@ cp .env.example .env   # fill in your real values
 npm run dev             # nodemon, or `npm start` for plain node
 ```
 
-Requires a running MongoDB instance (local or Atlas) and a Google OAuth Client
-(Google Cloud Console → APIs & Services → Credentials) with the callback URL
-set to match `GOOGLE_CALLBACK_URL`.
+Requires a running MongoDB instance (local or Atlas).
 
 For email sending, EMAIL_USER/EMAIL_PASS expects an app password if using Gmail
 (regular password won't work with 2FA enabled). Swap nodemailer's transport for
-SendGrid/SES/Mailgun in production.
+SendGrid/SES/Mailgun in production. If you don't want to set up email yet,
+registration still works — the account just won't be marked verified until
+you either send real emails or temporarily set `isVerified: true` manually
+in MongoDB while developing.
 
 ## Endpoints
 
@@ -28,12 +29,10 @@ SendGrid/SES/Mailgun in production.
 | POST | /api/auth/login | Public | Login, returns access token + sets refresh cookie |
 | POST | /api/auth/refresh-token | Cookie | Issue new access token |
 | POST | /api/auth/logout | Bearer token | Clears refresh token + cookie |
-| GET | /api/auth/verify-email/:token | Public | Verify email from link |
 | POST | /api/auth/forgot-password | Public | Sends reset link |
 | POST | /api/auth/reset-password/:token | Public | Sets new password |
 | GET | /api/auth/me | Bearer token | Current user |
-| GET | /api/auth/google | Public | Starts Google OAuth |
-| GET | /api/auth/google/callback | Public | OAuth callback, redirects to frontend with token |
+| PATCH | /api/users/me | Bearer token | Update profile (skills, education) |
 | GET | /api/auth/admin-only | Bearer token + admin role | Example RBAC route |
 
 ## How the pieces fit together
@@ -55,13 +54,13 @@ SendGrid/SES/Mailgun in production.
 - Axios instance should attach `Authorization: Bearer <accessToken>` and use an
   interceptor: on 401, call `/api/auth/refresh-token` (cookie sent automatically
   with `withCredentials: true`), retry the original request.
-- On app load, silently call `/api/auth/refresh-token` to restore a session if the
+- On app load, only call `/api/auth/refresh-token` when a refresh token cookie is present; otherwise, stay logged out.
   refresh cookie is still valid.
 
-## Next steps to wire up
+## Adding OAuth back later
 
-1. `npm install` and fill in `.env`
-2. Point your React app's axios `baseURL` + `withCredentials: true` at this API
-3. Build the frontend pages (Register, Login, Forgot/Reset Password, Verify Email)
-   — happy to scaffold those next with the components list from your spec
-   (LoginForm, RegisterForm, GoogleButton, ProtectedRoute, etc.)
+This is intentionally left out to avoid requiring Google Cloud credentials.
+If you want to add Google (or GitHub, etc.) sign-in later, the User model
+already has a `provider` field ready for it — you'd add `passport` +
+`passport-google-oauth20`, a strategy config, and a `/google` + `/google/callback`
+route pair back into `auth.routes.js`.

@@ -2,7 +2,6 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const passport = require("./config/passport");
 const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
 const { notFound, errorHandler } = require("./middleware/error.middleware");
@@ -19,7 +18,6 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(passport.initialize());
 
 app.get("/api/health", (req, res) => res.json({ success: true, message: "HireFlow API is running" }));
 

@@ -197,7 +197,6 @@ POST	/api/auth/logout	Logout
 POST	/api/auth/refresh-token	Get new access token
 POST	/api/auth/forgot-password	Send reset email
 POST	/api/auth/reset-password	Reset password
-GET	/api/auth/verify-email/:token	Verify email
 GET	/api/auth/google	Google OAuth
 GET	/api/auth/me	Current logged-in user
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Facebook, Chrome, Linkedin, Eye, EyeOff, Loader2 } from "lucide-react";
-import { registerUser, loginUser, googleLoginUrl } from "../api/auth.api";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { registerUser, loginUser } from "../api/auth.api";
 import { useAuth } from "../context/AuthContext";
 
 export default function AuthPage() {
@@ -44,7 +44,7 @@ export default function AuthPage() {
     setLoading(true);
     try {
       await registerUser(signupForm);
-      setInfo("Account created! Check your email to verify before signing in.");
+      setInfo("Account created successfully. Please login.");
       setIsSignUp(false);
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed. Please try again.");
@@ -142,24 +142,6 @@ export default function AuthPage() {
           color: #fff;
         }
 
-        .social-icon {
-          width: 42px;
-          height: 42px;
-          border-radius: 50%;
-          border: 1px solid #d8dee9;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #4a5568;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          background: #fff;
-        }
-        .social-icon:hover {
-          background: #f1f5f9;
-          transform: translateY(-2px);
-        }
-
         .auth-input {
           width: 100%;
           background: #f2f4f7;
@@ -233,15 +215,7 @@ export default function AuthPage() {
 
         {/* SIGN IN FORM */}
         <form className="form-panel sign-in-panel" onSubmit={handleLogin}>
-          <h2 style={{ fontSize: 26, fontWeight: 700, color: "#111827", marginBottom: 18 }}>Sign In</h2>
-
-          <div style={{ display: "flex", gap: 12, marginBottom: 18 }}>
-            <span className="social-icon"><Facebook size={18} /></span>
-            <span className="social-icon"><Chrome size={18} /></span>
-            <span className="social-icon" onClick={() => (window.location.href = googleLoginUrl())}><Linkedin size={18} /></span>
-          </div>
-
-          <p style={{ fontSize: 12, color: "#94a3b8", marginBottom: 16 }}>or use your account</p>
+          <h2 style={{ fontSize: 26, fontWeight: 700, color: "#111827", marginBottom: 24 }}>Sign In</h2>
 
           {!isSignUp && error && (
             <p style={{ color: "#dc2626", fontSize: 12, marginBottom: 10 }}>{error}</p>
@@ -290,15 +264,7 @@ export default function AuthPage() {
 
         {/* SIGN UP FORM */}
         <form className="form-panel sign-up-panel" onSubmit={handleSignup}>
-          <h2 style={{ fontSize: 26, fontWeight: 700, color: "#111827", marginBottom: 18 }}>Create Account</h2>
-
-          <div style={{ display: "flex", gap: 12, marginBottom: 18 }}>
-            <span className="social-icon"><Facebook size={18} /></span>
-            <span className="social-icon" onClick={() => (window.location.href = googleLoginUrl())}><Chrome size={18} /></span>
-            <span className="social-icon"><Linkedin size={18} /></span>
-          </div>
-
-          <p style={{ fontSize: 12, color: "#94a3b8", marginBottom: 16 }}>or use your email for registration</p>
+          <h2 style={{ fontSize: 26, fontWeight: 700, color: "#111827", marginBottom: 24 }}>Create Account</h2>
 
           {isSignUp && error && (
             <p style={{ color: "#dc2626", fontSize: 12, marginBottom: 10 }}>{error}</p>

@@ -1,6 +1,5 @@
 const authService = require("../services/auth.service");
 const { asyncHandler } = require("../middleware/error.middleware");
-const { generateAccessToken, generateRefreshToken } = require("../utils/generateToken");
 const { refreshExpiresInMs } = require("../config/jwt");
 
 const cookieOptions = {
@@ -25,7 +24,7 @@ const register = asyncHandler(async (req, res) => {
   const user = await authService.registerUser(req.body);
   res.status(201).json({
     success: true,
-    message: "Registration successful. Please check your email to verify your account.",
+    message: "Account created successfully. Please login.",
     data: sanitizeUser(user),
   });
 });
@@ -59,12 +58,6 @@ const logout = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: "Logged out successfully" });
 });
 
-// GET /api/auth/verify-email/:token
-const verifyEmail = asyncHandler(async (req, res) => {
-  await authService.verifyEmail(req.params.token);
-  res.status(200).json({ success: true, message: "Email verified successfully. You can now log in." });
-});
-
 // POST /api/auth/forgot-password
 const forgotPassword = asyncHandler(async (req, res) => {
   await authService.forgotPassword(req.body.email);
@@ -85,29 +78,12 @@ const getMe = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: sanitizeUser(req.user) });
 });
 
-// GET /api/auth/google/callback  (after passport.authenticate("google") succeeds)
-const googleCallback = asyncHandler(async (req, res) => {
-  const user = req.user;
-  const accessToken = generateAccessToken(user._id, user.role);
-  const newRefreshToken = generateRefreshToken(user._id);
-
-  user.refreshToken = newRefreshToken;
-  await user.save();
-
-  res.cookie("refreshToken", newRefreshToken, cookieOptions);
-
-  // Redirect back to frontend with the access token (frontend stores it in memory/redux)
-  res.redirect(`${process.env.CLIENT_URL}/oauth/success?accessToken=${accessToken}`);
-});
-
 module.exports = {
   register,
   login,
   refreshToken,
   logout,
-  verifyEmail,
   forgotPassword,
   resetPassword,
   getMe,
-  googleCallback,
 };

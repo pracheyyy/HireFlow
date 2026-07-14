@@ -30,8 +30,3 @@ export const updateProfile = async (payload) => {
   const { data } = await api.patch("/users/me", payload);
   return data.data;
 };
-
-export const googleLoginUrl = () => {
-  const API_BASE_URL = import.meta.env?.VITE_API_URL || "http://localhost:5000/api";
-  return `${API_BASE_URL}/auth/google`;
-};

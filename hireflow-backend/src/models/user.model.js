@@ -16,10 +16,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      // Not required for Google-provider accounts
-      required: function () {
-        return this.provider === "local";
-      },
+      required: [true, "Password is required"],
       select: false, // never return password by default
     },
     avatar: {
@@ -47,23 +44,10 @@ const userSchema = new mongoose.Schema(
     },
     isVerified: {
       type: Boolean,
-      default: false,
-    },
-    provider: {
-      type: String,
-      enum: ["local", "google"],
-      default: "local",
+      default: true,
     },
     refreshToken: {
       type: String,
-      select: false,
-    },
-    emailVerificationToken: {
-      type: String,
-      select: false,
-    },
-    emailVerificationExpires: {
-      type: Date,
       select: false,
     },
     resetPasswordToken: {

@@ -11,11 +11,11 @@ const FEATURES = [
   { icon: Mic, title: "Mock interviews", desc: "Practice HR and technical rounds with real AI feedback." },
   { icon: Code2, title: "Coding tracker", desc: "Daily goals, streaks, topic-wise progress." },
   { icon: Bot, title: "AI career assistant", desc: "Company-specific prep plans, on demand." },
-  // { icon: BarChart3, title: "Progress analytics", desc: "One score for how ready you really are." },
+  { icon: BarChart3, title: "Progress analytics", desc: "One score for how ready you really are." },
 ];
 
 const STEPS = [
-  { icon: UserPlus, title: "Create your account", desc: "Sign up with email or Google in under a minute." },
+  { icon: UserPlus, title: "Create your account", desc: "Sign up with your email in under a minute." },
   { icon: ClipboardList, title: "Complete your profile", desc: "Add your skills and education so prep plans fit you." },
   { icon: Sparkles, title: "Get AI-powered prep", desc: "Resume scans, mock interviews, and a live readiness score." },
 ];
