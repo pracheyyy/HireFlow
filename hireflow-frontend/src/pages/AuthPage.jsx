@@ -44,7 +44,7 @@ export default function AuthPage() {
     setLoading(true);
     try {
       await registerUser(signupForm);
-      setInfo("Account created successfully. Please login.");
+      setInfo("Account created! Check your email to verify before signing in.");
       setIsSignUp(false);
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed. Please try again.");

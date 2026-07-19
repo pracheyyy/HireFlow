@@ -33,6 +33,24 @@ const sendEmail = async ({ to, subject, html }) => {
   return { skipped: false };
 };
 
+const sendVerificationEmail = async (email, token) => {
+  const verifyUrl = `${process.env.CLIENT_URL}/verify-email/${token}`;
+  const result = await sendEmail({
+    to: email,
+    subject: "Verify your HireFlow account",
+    html: `
+      <h2>Welcome to HireFlow 🚀</h2>
+      <p>Please verify your email address to activate your account.</p>
+      <a href="${verifyUrl}" style="display:inline-block;padding:10px 20px;background:#4f46e5;color:#fff;border-radius:6px;text-decoration:none;">Verify Email</a>
+      <p>This link expires in 24 hours.</p>
+    `,
+  });
+  if (result.skipped) {
+    console.log(`[email] Verification link for ${email}: ${verifyUrl}`);
+  }
+  return result;
+};
+
 const sendPasswordResetEmail = async (email, token) => {
   const resetUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
   const result = await sendEmail({
@@ -51,4 +69,4 @@ const sendPasswordResetEmail = async (email, token) => {
   return result;
 };
 
-module.exports = { sendEmail, sendPasswordResetEmail };
+module.exports = { sendEmail, sendVerificationEmail, sendPasswordResetEmail };

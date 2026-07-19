@@ -4,6 +4,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
+const resumeRoutes = require("./routes/resume.routes");
+const interviewRoutes = require("./routes/interview.routes");
 const { notFound, errorHandler } = require("./middleware/error.middleware");
 
 const app = express();
@@ -23,6 +25,8 @@ app.get("/api/health", (req, res) => res.json({ success: true, message: "HireFlo
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/resume", resumeRoutes);
+app.use("/api/interview", interviewRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -14,6 +14,9 @@ const sanitizeUser = (user) => ({
   name: user.name,
   email: user.email,
   avatar: user.avatar,
+  skills: user.skills,
+  education: user.education,
+  profile: user.profile,
   role: user.role,
   isVerified: user.isVerified,
   provider: user.provider,
@@ -24,7 +27,7 @@ const register = asyncHandler(async (req, res) => {
   const user = await authService.registerUser(req.body);
   res.status(201).json({
     success: true,
-    message: "Account created successfully. Please login.",
+    message: "Registration successful. Please check your email to verify your account.",
     data: sanitizeUser(user),
   });
 });
@@ -58,6 +61,12 @@ const logout = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: "Logged out successfully" });
 });
 
+// GET /api/auth/verify-email/:token
+const verifyEmail = asyncHandler(async (req, res) => {
+  await authService.verifyEmail(req.params.token);
+  res.status(200).json({ success: true, message: "Email verified successfully. You can now log in." });
+});
+
 // POST /api/auth/forgot-password
 const forgotPassword = asyncHandler(async (req, res) => {
   await authService.forgotPassword(req.body.email);
@@ -83,6 +92,7 @@ module.exports = {
   login,
   refreshToken,
   logout,
+  verifyEmail,
   forgotPassword,
   resetPassword,
   getMe,

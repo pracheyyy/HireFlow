@@ -29,6 +29,7 @@ in MongoDB while developing.
 | POST | /api/auth/login | Public | Login, returns access token + sets refresh cookie |
 | POST | /api/auth/refresh-token | Cookie | Issue new access token |
 | POST | /api/auth/logout | Bearer token | Clears refresh token + cookie |
+| GET | /api/auth/verify-email/:token | Public | Verify email from link |
 | POST | /api/auth/forgot-password | Public | Sends reset link |
 | POST | /api/auth/reset-password/:token | Public | Sets new password |
 | GET | /api/auth/me | Bearer token | Current user |
@@ -54,7 +55,7 @@ in MongoDB while developing.
 - Axios instance should attach `Authorization: Bearer <accessToken>` and use an
   interceptor: on 401, call `/api/auth/refresh-token` (cookie sent automatically
   with `withCredentials: true`), retry the original request.
-- On app load, only call `/api/auth/refresh-token` when a refresh token cookie is present; otherwise, stay logged out.
+- On app load, silently call `/api/auth/refresh-token` to restore a session if the
   refresh cookie is still valid.
 
 ## Adding OAuth back later

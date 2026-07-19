@@ -24,11 +24,6 @@ api.interceptors.request.use((config) => {
 let isRefreshing = false;
 let queue = [];
 
-const hasRefreshTokenCookie = () => {
-  if (typeof document === "undefined") return false;
-  return document.cookie.split(";").some((cookie) => cookie.trim().startsWith("refreshToken="));
-};
-
 const processQueue = (error, token = null) => {
   queue.forEach((p) => (error ? p.reject(error) : p.resolve(token)));
   queue = [];
@@ -40,11 +35,6 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      if (!hasRefreshTokenCookie()) {
-        setAccessToken(null);
-        return Promise.reject(error);
-      }
-
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           queue.push({ resolve, reject });

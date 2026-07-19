@@ -37,6 +37,57 @@ const userSchema = new mongoose.Schema(
       ],
       default: [],
     },
+    profile: {
+      personal: {
+        fullName: String,
+        phone: String,
+        city: String,
+        linkedIn: String,
+        github: String,
+      },
+      academic: {
+        cgpa: String,
+        tenth: String,
+        twelfth: String,
+        currentSemester: String,
+        activeBacklogs: { type: Number, default: 0 },
+      },
+      codingProfiles: {
+        leetCode: String,
+        codeChef: String,
+        codeforces: String,
+        problemsSolved: { type: Number, default: 0 },
+      },
+      projects: {
+        type: [
+          {
+            name: String,
+            description: String,
+            techStack: [String],
+            githubLink: String,
+            liveLink: String,
+          },
+        ],
+        default: [],
+      },
+      experience: {
+        type: [
+          {
+            company: String,
+            role: String,
+            duration: String,
+            description: String,
+          },
+        ],
+        default: [],
+      },
+      careerPreferences: {
+        dreamRole: String,
+        domains: { type: [String], default: [] },
+        employmentType: String,
+        preferredLocations: { type: [String], default: [] },
+      },
+    },
     role: {
       type: String,
       enum: ["student", "admin"],
@@ -44,10 +95,18 @@ const userSchema = new mongoose.Schema(
     },
     isVerified: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     refreshToken: {
       type: String,
+      select: false,
+    },
+    emailVerificationToken: {
+      type: String,
+      select: false,
+    },
+    emailVerificationExpires: {
+      type: Date,
       select: false,
     },
     resetPasswordToken: {

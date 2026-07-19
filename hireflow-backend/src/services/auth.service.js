@@ -1,11 +1,7 @@
-const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
-const {
-  generateAccessToken,
-  generateRefreshToken,
-} = require("../utils/generateToken");
+const { generateAccessToken, generateRefreshToken, generateRandomToken } = require("../utils/generateToken");
 const { sendPasswordResetEmail } = require("./email.service");
 const { refreshSecret } = require("../config/jwt");
 
@@ -25,6 +21,7 @@ const registerUser = async ({ name, email, password }) => {
     name,
     email,
     password: hashedPassword,
+    isVerified: true, // email verification disabled — no email service required to use the app
   });
 
   return user;
@@ -86,21 +83,44 @@ const logoutUser = async (userId) => {
   await User.findByIdAndUpdate(userId, { refreshToken: "" });
 };
 
-const forgotPassword = async (email) => {
-  const user = await User.findOne({ email });
-  if (!user) return;
-
-  const rawToken = crypto.randomBytes(32).toString("hex");
+const verifyEmail = async (rawToken) => {
+  const crypto = require("crypto");
   const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
 
+  const user = await User.findOne({
+    emailVerificationToken: hashedToken,
+    emailVerificationExpires: { $gt: Date.now() },
+  }).select("+emailVerificationToken +emailVerificationExpires");
+
+  if (!user) {
+    const err = new Error("Verification link is invalid or has expired");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  user.isVerified = true;
+  user.emailVerificationToken = undefined;
+  user.emailVerificationExpires = undefined;
+  await user.save();
+
+  return user;
+};
+
+const forgotPassword = async (email) => {
+  const user = await User.findOne({ email });
+  // Don't reveal whether the email exists - always resolve silently
+  if (!user) return;
+
+  const { rawToken, hashedToken } = generateRandomToken();
   user.resetPasswordToken = hashedToken;
-  user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
+  user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 min
   await user.save();
 
   await sendPasswordResetEmail(email, rawToken);
 };
 
 const resetPassword = async (rawToken, newPassword) => {
+  const crypto = require("crypto");
   const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
 
   const user = await User.findOne({
@@ -117,7 +137,7 @@ const resetPassword = async (rawToken, newPassword) => {
   user.password = await bcrypt.hash(newPassword, SALT_ROUNDS);
   user.resetPasswordToken = undefined;
   user.resetPasswordExpires = undefined;
-  user.refreshToken = "";
+  user.refreshToken = ""; // force re-login everywhere after password reset
   await user.save();
 
   return user;
@@ -128,6 +148,7 @@ module.exports = {
   loginUser,
   refreshAccessToken,
   logoutUser,
+  verifyEmail,
   forgotPassword,
   resetPassword,
 };

@@ -24,6 +24,15 @@ const errorHandler = (err, req, res, next) => {
     message = Object.values(err.errors).map((e) => e.message).join(", ");
   }
 
+  // Multer upload errors (file too large, unexpected field, wrong type from fileFilter)
+  if (err.name === "MulterError") {
+    statusCode = 400;
+    message = err.code === "LIMIT_FILE_SIZE" ? "File is too large — max size is 5MB." : err.message;
+  }
+  if (err.message === "Only PDF files are accepted.") {
+    statusCode = 400;
+  }
+
   if (process.env.NODE_ENV !== "production") {
     console.error(err);
   }

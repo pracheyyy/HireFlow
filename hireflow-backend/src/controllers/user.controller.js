@@ -8,6 +8,7 @@ const sanitizeUser = (user) => ({
   avatar: user.avatar,
   skills: user.skills,
   education: user.education,
+  profile: user.profile,
   role: user.role,
   isVerified: user.isVerified,
   provider: user.provider,
@@ -15,7 +16,7 @@ const sanitizeUser = (user) => ({
 
 // PATCH /api/users/me
 const updateProfile = asyncHandler(async (req, res) => {
-  const allowedFields = ["name", "avatar", "skills", "education"];
+  const allowedFields = ["name", "avatar", "skills", "education", "profile"];
   const updates = {};
 
   for (const field of allowedFields) {
