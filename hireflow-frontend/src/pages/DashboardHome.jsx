@@ -1,10 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FileText, Mic, Code2, Bot, BarChart3, ArrowUpRight,
   Flame, Target, Sparkles,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { getOverview } from "../api/analytics.api";
 
 const FEATURES = [
   {
@@ -92,15 +93,22 @@ export default function DashboardHome() {
   const firstName = user?.name?.split(" ")[0] || "there";
   const greeting = useMemo(getGreeting, []);
 
-  // Placeholder data — will be driven by real activity once each feature is built out
+  // Real data from the analytics overview — falls back to zeros while loading
+  // or if the request fails, so the page never looks broken.
+  const [overview, setOverview] = useState(null);
+
+  useEffect(() => {
+    getOverview().then(setOverview).catch(() => {});
+  }, []);
+
   const stats = {
-    readiness: 0,
-    atsScore: null,
-    streak: 0,
-    interviews: 0,
+    readiness: overview?.readinessScore ?? 0,
+    atsScore: overview?.resume?.latestScore ?? null,
+    streak: overview?.coding?.currentStreak ?? 0,
+    interviews: overview?.interview?.totalSessions ?? 0,
   };
 
-  const hasResume = false; // will come from user/profile state once resume upload exists
+  const hasResume = overview?.resume?.latestScore != null;
 
   return (
     <div>
